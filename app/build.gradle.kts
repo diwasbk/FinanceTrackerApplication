@@ -7,6 +7,10 @@ android {
     namespace = "com.example.financetrackerapplication"
     compileSdk = 35
 
+    buildFeatures{
+        viewBinding = true
+    }
+    
     defaultConfig {
         applicationId = "com.example.financetrackerapplication"
         minSdk = 24
