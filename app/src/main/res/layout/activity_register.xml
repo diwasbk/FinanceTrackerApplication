@@ -126,5 +126,4 @@
             android:textAlignment="center" />
 
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

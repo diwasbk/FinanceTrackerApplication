@@ -7,29 +7,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.financetrackerapplication.R
-import com.example.financetrackerapplication.databinding.ActivityLoginBinding
+import com.example.financetrackerapplication.databinding.ActivityResetPasswordBinding
 
-class LoginActivity : AppCompatActivity() {
+class ResetPasswordActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityLoginBinding
+    private lateinit var binding: ActivityResetPasswordBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        binding = ActivityLoginBinding.inflate(layoutInflater)
+        binding = ActivityResetPasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Navigate to Reset Password Activity
-        binding.resetPassword.setOnClickListener{
-            val intent = Intent(this, ResetPasswordActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-
-        // Navigate to Register Activity
-        binding.navigateRegister.setOnClickListener {
-            val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
+        // Navigate to Login Activity
+        binding.backArrow.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
         }
