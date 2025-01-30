@@ -1,60 +1,69 @@
 package com.example.financetrackerapplication.ui.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.financetrackerapplication.R
+import androidx.appcompat.app.AlertDialog
+import com.example.financetrackerapplication.databinding.FragmentAccountBinding
+import com.example.financetrackerapplication.ui.activity.ChangePasswordActivity
+import com.example.financetrackerapplication.ui.activity.EditProfileActivity
+import com.example.financetrackerapplication.ui.activity.IntroActivity
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [AccountFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class AccountFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: FragmentAccountBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_account, container, false)
+    ): View {
+        _binding = FragmentAccountBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AccountFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AccountFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Handle "Edit Profile" click
+        binding.editProfile.setOnClickListener {
+            val intent = Intent(requireContext(), EditProfileActivity::class.java)
+            startActivity(intent)
+        }
+
+        // Handle "Change Password" click
+        binding.changePassword.setOnClickListener {
+            val intent = Intent(requireContext(), ChangePasswordActivity::class.java)
+            startActivity(intent)
+        }
+
+        // Handle "Logout" click
+        binding.logout.setOnClickListener {
+            // Create a confirmation dialog
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setMessage("Are you sure you want to log out?")
+                .setCancelable(false)
+                .setPositiveButton("Yes") { dialog, id ->
+                    // Proceed with logout
+                    val intent = Intent(requireContext(), IntroActivity::class.java)
+                    startActivity(intent)
+                    requireActivity().finish() // Use requireActivity() to access the parent activity
                 }
-            }
+                .setNegativeButton("No") { dialog, id ->
+                    // Dismiss the dialog, do nothing
+                    dialog.dismiss()
+                }
+
+            // Show the dialog
+            builder.create().show()
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
