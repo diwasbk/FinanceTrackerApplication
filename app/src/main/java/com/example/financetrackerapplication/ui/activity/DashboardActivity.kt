@@ -30,7 +30,7 @@ class DashboardActivity : AppCompatActivity() {
         binding.bottomNavigationView.itemActiveIndicatorColor = null
         
         // To show Statement Fragment by default
-        replaceFragment(StatementFragment())
+        replaceFragment(AddFragment())
         binding.bottomNavigationView.setOnItemSelectedListener {menu->
             when(menu.itemId){
                 R.id.navStatement -> replaceFragment(StatementFragment())
