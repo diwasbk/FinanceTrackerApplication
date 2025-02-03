@@ -6,22 +6,47 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import com.example.financetrackerapplication.databinding.FragmentAccountBinding
 import com.example.financetrackerapplication.ui.activity.ChangePasswordActivity
 import com.example.financetrackerapplication.ui.activity.EditProfileActivity
 import com.example.financetrackerapplication.ui.activity.IntroActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class AccountFragment : Fragment() {
 
     private var _binding: FragmentAccountBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var profileNameTextView: TextView
+    private lateinit var profileEmailTextView: TextView
+    private lateinit var totalBalanceTextView: TextView
+
+    private val database: FirebaseDatabase = FirebaseDatabase.getInstance()
+    private val userId: String = FirebaseAuth.getInstance().currentUser?.uid ?: "defaultUserId"
+    private val userRef: DatabaseReference = database.reference.child("users").child(userId)
+    private val balanceRef: DatabaseReference = database.reference.child("records").child(userId).child("balance")
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentAccountBinding.inflate(inflater, container, false)
+
+        // Initialize UI elements
+        profileNameTextView = binding.profileName
+        profileEmailTextView = binding.profileEmail
+        totalBalanceTextView = binding.totalBalance
+        // Fetch and display user data
+        fetchUserData()
+        // Fetch and display the user's balance from the balance node
+        fetchRemainingBalance()
         return binding.root
     }
 
@@ -33,13 +58,11 @@ class AccountFragment : Fragment() {
             val intent = Intent(requireContext(), EditProfileActivity::class.java)
             startActivity(intent)
         }
-
         // Handle "Change Password" click
         binding.changePassword.setOnClickListener {
             val intent = Intent(requireContext(), ChangePasswordActivity::class.java)
             startActivity(intent)
         }
-
         // Handle "Logout" click
         binding.logout.setOnClickListener {
             // Create a confirmation dialog
@@ -56,10 +79,46 @@ class AccountFragment : Fragment() {
                     // Dismiss the dialog, do nothing
                     dialog.dismiss()
                 }
-
             // Show the dialog
             builder.create().show()
         }
+    }
+
+    private fun fetchUserData() {
+        userRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                // Fetch and update email
+                val email = snapshot.child("email").getValue(String::class.java)
+                profileEmailTextView.text = email ?: "No Email"
+                // Optionally fetch and display user's name
+                val fullName = snapshot.child("fullName").getValue(String::class.java)
+                profileNameTextView.text = fullName ?: "Full Name"
+                // Fetch and display username in uppercase
+                val username = snapshot.child("username").getValue(String::class.java)
+                profileNameTextView.text = username?.toUpperCase() ?: "Username"  // Convert username to uppercase
+            }
+            override fun onCancelled(error: DatabaseError) {
+                // Handle database error
+            }
+        })
+    }
+
+    private fun fetchRemainingBalance() {
+        balanceRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                // Retrieve the balance information from the balance node
+                val totalIncome = snapshot.child("totalIncome").getValue(Double::class.java) ?: 0.0
+                val totalExpense =
+                    snapshot.child("totalExpense").getValue(Double::class.java) ?: 0.0
+                val remainingBalance =
+                    snapshot.child("remainingBalance").getValue(Double::class.java) ?: 0.0
+                // Update UI
+                totalBalanceTextView.text = "%.2f".format(remainingBalance)
+            }
+            override fun onCancelled(error: DatabaseError) {
+                // Handle database error
+            }
+        })
     }
 
     override fun onDestroyView() {
