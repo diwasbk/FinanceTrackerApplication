@@ -1,11 +1,16 @@
 package com.example.financetrackerapplication.ui.fragment
 
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.financetrackerapplication.databinding.FragmentStatisticBinding
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -44,11 +49,52 @@ class StatisticFragment : Fragment() {
                 binding.incomeBalance.text = "%.2f".format(totalIncome)
                 binding.expenseBalance.text = "%.2f".format(totalExpense)
                 binding.remainingBalance.text = "%.2f".format(remainingBalance)
+                // Update the Pie Chart
+                updatePieChart(totalIncome, totalExpense, remainingBalance)
             }
             override fun onCancelled(error: DatabaseError) {
                 // Handle any database errors
             }
         })
+    }
+
+    private fun updatePieChart(income: Double, expense: Double, remainingBalance: Double) {
+        val entries = mutableListOf<PieEntry>()
+        if (income > 0) entries.add(PieEntry(income.toFloat(), "Income"))
+        if (expense > 0) entries.add(PieEntry(expense.toFloat(), "Expense"))
+        if (remainingBalance > 0) entries.add(PieEntry(remainingBalance.toFloat(), "Remaining"))
+        val colors = listOf(Color.parseColor("#4CAF50"), Color.RED, Color.parseColor("#2196F3"))
+
+        val dataSet = PieDataSet(entries, "").apply {
+            setColors(colors)
+            valueTextSize = 14f
+            valueTextColor = Color.WHITE
+            valueTypeface = Typeface.DEFAULT_BOLD // Make values bold
+        }
+
+        val pieData = PieData(dataSet).apply {
+            setValueTextSize(14f)
+            setValueTextColor(Color.WHITE)
+            setValueTypeface(Typeface.DEFAULT_BOLD)
+            setValueFormatter(PercentFormatter()) // Custom formatter to show percentages
+        }
+
+        binding.pieChart.apply {
+            description.isEnabled = false
+            setUsePercentValues(true) // Show values in percentage
+            animateY(1000) // Smooth animation
+            data = pieData
+            setEntryLabelColor(Color.WHITE) // Set labels to white
+            setEntryLabelTypeface(Typeface.DEFAULT_BOLD) // Make labels bold
+            invalidate() // Refresh chart
+        }
+    }
+
+    // Custom Formatter to show percentage
+    class PercentFormatter : com.github.mikephil.charting.formatter.ValueFormatter() {
+        override fun getFormattedValue(value: Float): String {
+            return "%.1f%%".format(value)
+        }
     }
 
     override fun onDestroyView() {

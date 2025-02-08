@@ -115,12 +115,11 @@
     </androidx.cardview.widget.CardView>
 
     <!-- Placeholder for the chart -->
-    <FrameLayout
-        android:id="@+id/chartFrame"
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pieChart"
         android:layout_width="match_parent"
         android:layout_height="360dp"
-        android:layout_marginTop="32dp"
-        android:background="@android:color/white" />
+        android:layout_marginTop="32dp"/>
 
     <!-- Description of the selected graph type -->
     <TextView
