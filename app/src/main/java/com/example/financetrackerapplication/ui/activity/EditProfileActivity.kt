@@ -1,11 +1,14 @@
 package com.example.financetrackerapplication.ui.activity
 
 import android.os.Bundle
+import android.view.View
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.airbnb.lottie.LottieAnimationView
 import com.example.financetrackerapplication.R
 import com.example.financetrackerapplication.databinding.ActivityEditProfileBinding
 import com.google.firebase.auth.EmailAuthProvider
@@ -16,6 +19,10 @@ import com.google.firebase.database.FirebaseDatabase
 class EditProfileActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityEditProfileBinding
+    
+    private lateinit var loadingLayout: LinearLayout
+    private lateinit var animationView: LottieAnimationView
+    
     // Firebase references
     private val database: FirebaseDatabase = FirebaseDatabase.getInstance()
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -29,6 +36,10 @@ class EditProfileActivity : AppCompatActivity() {
         binding = ActivityEditProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Initialize Loading Layout and Animation View
+        loadingLayout = binding.loadingLayout
+        animationView = binding.animationView // Link LottieAnimationView
+        
         // Handle back arrow click
         binding.backArrow.setOnClickListener {
             finish()
@@ -58,6 +69,8 @@ class EditProfileActivity : AppCompatActivity() {
     }
     private fun verifyPasswordAndUpdateUsername(password: String, newUsername: String) {
         val currentUser = auth.currentUser
+        // Show loading before starting Firebase operations
+        showLoading()
         // Re-authenticate the user to verify the password
         val credential = EmailAuthProvider.getCredential(currentUser?.email ?: "", password)
         currentUser?.reauthenticate(credential)?.addOnCompleteListener { task ->
@@ -65,6 +78,8 @@ class EditProfileActivity : AppCompatActivity() {
                 // Password is correct, update the username in Firebase
                 userRef.child("username").setValue(newUsername.toLowerCase()).addOnCompleteListener { updateTask ->
                     if (updateTask.isSuccessful) {
+                        // Hide the loading once response is received
+                        hideLoading()
                         // Username updated successfully
                         Toast.makeText(this, "Username changed successfully", Toast.LENGTH_SHORT).show()
                         // Close the activity after the successful update
@@ -75,9 +90,20 @@ class EditProfileActivity : AppCompatActivity() {
                     }
                 }
             } else {
+                hideLoading() // Hide loading progress bar if password verification fails
                 // Password is incorrect
                 Toast.makeText(this, "Wrong password. Please try again.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun showLoading() {
+        loadingLayout.visibility = View.VISIBLE
+        animationView.playAnimation()  // Start Lottie animation
+    }
+
+    private fun hideLoading() {
+        loadingLayout.visibility = View.GONE
+        animationView.cancelAnimation()  // Stop Lottie animation
     }
 }

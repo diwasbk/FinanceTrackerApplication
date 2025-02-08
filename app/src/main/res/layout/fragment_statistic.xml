@@ -47,7 +47,7 @@
                     android:fontFamily="@font/questrial"
                     android:gravity="end"
                     android:text="XXX.XX"
-                    android:textColor="@color/blue"
+                    android:textColor="@color/green"
                     android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -106,7 +106,7 @@
                     android:fontFamily="@font/questrial"
                     android:gravity="end"
                     android:text="XXX.XX"
-                    android:textColor="@color/green"
+                    android:textColor="@color/blue"
                     android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>

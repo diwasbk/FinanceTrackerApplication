@@ -146,5 +146,24 @@
             android:textColor="@color/white"
             android:textSize="25sp" />
 
+        <!-- Loading -->
+        <LinearLayout
+            android:id="@+id/loadingLayout"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <!-- Lottie Animation -->
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animation_view"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:lottie_autoPlay="false"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/progress" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

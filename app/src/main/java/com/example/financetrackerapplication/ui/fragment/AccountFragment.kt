@@ -6,8 +6,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import com.airbnb.lottie.LottieAnimationView
 import com.example.financetrackerapplication.databinding.FragmentAccountBinding
 import com.example.financetrackerapplication.ui.activity.ChangePasswordActivity
 import com.example.financetrackerapplication.ui.activity.EditProfileActivity
@@ -27,6 +29,9 @@ class AccountFragment : Fragment() {
     private lateinit var profileNameTextView: TextView
     private lateinit var profileEmailTextView: TextView
     private lateinit var totalBalanceTextView: TextView
+
+    private lateinit var loadingLayout: LinearLayout
+    private lateinit var animationView: LottieAnimationView
 
     private val database: FirebaseDatabase = FirebaseDatabase.getInstance()
     private val userId: String = FirebaseAuth.getInstance().currentUser?.uid ?: "defaultUserId"
@@ -53,6 +58,12 @@ class AccountFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Initialize Loading and Animation View
+        loadingLayout = binding.loadingLayout
+        animationView = binding.animationView // Link LottieAnimationView
+
+        // Show loading animation
+        showLoading()
         // Handle "Edit Profile" click
         binding.editProfile.setOnClickListener {
             val intent = Intent(requireContext(), EditProfileActivity::class.java)
@@ -96,9 +107,12 @@ class AccountFragment : Fragment() {
                 // Fetch and display username in uppercase
                 val username = snapshot.child("username").getValue(String::class.java)
                 profileNameTextView.text = username?.toUpperCase() ?: "Username"  // Convert username to uppercase
+                // Hide loading animation after data is loaded
+                hideLoading()
             }
             override fun onCancelled(error: DatabaseError) {
                 // Handle database error
+                hideLoading()
             }
         })
     }
@@ -114,11 +128,23 @@ class AccountFragment : Fragment() {
                     snapshot.child("remainingBalance").getValue(Double::class.java) ?: 0.0
                 // Update UI
                 totalBalanceTextView.text = "%.2f".format(remainingBalance)
+                // Hide loading animation after data is loaded
+                hideLoading()
             }
             override fun onCancelled(error: DatabaseError) {
                 // Handle database error
             }
         })
+    }
+
+    private fun showLoading() {
+        loadingLayout.visibility = View.VISIBLE
+        animationView.playAnimation()  // Start Lottie animation
+    }
+
+    private fun hideLoading() {
+        loadingLayout.visibility = View.GONE
+        animationView.cancelAnimation()  // Stop Lottie animation
     }
 
     override fun onDestroyView() {

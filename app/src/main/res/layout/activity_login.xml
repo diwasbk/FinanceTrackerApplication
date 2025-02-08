@@ -114,6 +114,26 @@
             android:fontFamily="@font/questrial"
             android:text="Don't have an Account? Register now!"
             android:textAlignment="center" />
+    </LinearLayout>
 
+    <!-- Loading -->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/loadingLayout"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <!-- Lottie Animation -->
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animation_view"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            app:lottie_autoPlay="false"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loading" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

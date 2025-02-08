@@ -5,11 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.example.financetrackerapplication.adapter.StatementAdapter
 import com.example.financetrackerapplication.databinding.FragmentStatementBinding
 import com.example.financetrackerapplication.model.ExpenseModel
@@ -27,6 +29,8 @@ class StatementFragment : Fragment() {
     private lateinit var adapter: StatementAdapter
     private lateinit var dataList: ArrayList<ExpenseModel>
     private lateinit var databaseReference: DatabaseReference
+    private lateinit var loadingLayout: LinearLayout
+    private lateinit var animationView: LottieAnimationView
     private var swipedPosition: Int = -1  // Store the position of the swiped item
 
     override fun onCreateView(
@@ -40,6 +44,14 @@ class StatementFragment : Fragment() {
         // Initialize RecyclerView
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        // Initialize RecyclerView
+        recyclerView = binding.recyclerView
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        // Initialize Loading Layout and Animation View
+        loadingLayout = binding.loadingLayout
+        animationView = binding.animationView // Link LottieAnimationView
 
         // Initialize Adapter and Data List
         dataList = ArrayList()
@@ -149,6 +161,8 @@ class StatementFragment : Fragment() {
     }
 
     private fun fetchDataFromFirebase() {
+        // Show loading
+        showLoading()
 
         // Get current user ID
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
@@ -165,11 +179,25 @@ class StatementFragment : Fragment() {
                     expense?.let { dataList.add(it) }
                 }
                 adapter.notifyDataSetChanged()
+                // Hide loading when data is loaded
+                hideLoading()
             }
 
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(requireContext(), "Error: ${error.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun showLoading() {
+        loadingLayout.visibility = View.VISIBLE
+        animationView.playAnimation()  // Start Lottie animation
+        recyclerView.visibility = View.GONE
+    }
+
+    private fun hideLoading() {
+        loadingLayout.visibility = View.GONE
+        recyclerView.visibility = View.VISIBLE
+        animationView.cancelAnimation()  // Stop Lottie animation
     }
 }

@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.LinearLayout
 import android.widget.Toast
+import com.airbnb.lottie.LottieAnimationView
 import com.example.financetrackerapplication.R
 import com.example.financetrackerapplication.databinding.FragmentAddBinding
 import com.example.financetrackerapplication.model.ExpenseModel
@@ -21,11 +23,18 @@ class AddFragment : Fragment() {
     private lateinit var expenseCategories: Array<String>
     private lateinit var expenseViewModel: ExpenseViewModel
 
+    private lateinit var loadingLayout: LinearLayout
+    private lateinit var animationView: LottieAnimationView
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
         _binding = FragmentAddBinding.inflate(inflater, container, false)
         val view = binding.root
+
+        // Initialize Loading and Animation View
+        loadingLayout = binding.loadingLayout
+        animationView = binding.animationView // Link LottieAnimationView
 
         // Initialize ViewModel
         expenseViewModel = ExpenseViewModel(ExpenseRepositoryImpl())
@@ -57,7 +66,11 @@ class AddFragment : Fragment() {
                 Toast.makeText(requireContext(), "Please enter a valid amount!", Toast.LENGTH_SHORT).show()
             } else {
                 val expense = ExpenseModel("", amount, category, type, remarks)
+                // Show loading before adding to the database
+                showLoading()
                 expenseViewModel.addExpense(expense) { success, message ->
+                    // Hide loading once the task is done
+                    hideLoading()
                     if (success) {
                         val successMessage = if (type == "Income") {
                             "Income Added Successfully"
@@ -93,6 +106,16 @@ class AddFragment : Fragment() {
         binding.typeGroup.clearCheck()
         binding.typeGroup.check(R.id.radioExpense) // Reset to "Expense" by default
         updateSpinnerOptions(expenseCategories)
+    }
+
+    private fun showLoading() {
+        loadingLayout.visibility = View.VISIBLE
+        animationView.playAnimation()  // Start Lottie animation
+    }
+
+    private fun hideLoading() {
+        loadingLayout.visibility = View.GONE
+        animationView.cancelAnimation()  // Stop Lottie animation
     }
 
     override fun onDestroyView() {

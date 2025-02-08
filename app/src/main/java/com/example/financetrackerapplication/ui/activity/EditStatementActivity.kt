@@ -1,13 +1,16 @@
 package com.example.financetrackerapplication.ui.activity
 
 import android.os.Bundle
+import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.airbnb.lottie.LottieAnimationView
 import com.example.financetrackerapplication.R
 import com.example.financetrackerapplication.databinding.ActivityEditStatementBinding
 import com.example.financetrackerapplication.model.ExpenseModel
@@ -22,12 +25,19 @@ class EditStatementActivity : AppCompatActivity() {
     private lateinit var incomeCategories: Array<String>
     private lateinit var expenseCategories: Array<String>
 
+    private lateinit var loadingLayout: LinearLayout
+    private lateinit var animationView: LottieAnimationView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         binding = ActivityEditStatementBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Initialize Loading Layout and Animation View
+        loadingLayout = binding.loadingLayout
+        animationView = binding.animationView // Link LottieAnimationView
 
         // Handle back arrow click
         binding.backArrow.setOnClickListener {
@@ -128,7 +138,11 @@ class EditStatementActivity : AppCompatActivity() {
                     "remarks" to updatedRemarks,
                     "date" to ServerValue.TIMESTAMP // Update to the current server timestamp
                 )
+                // Show loading
+                showLoading()
                 expenseRef.updateChildren(updatedData).addOnCompleteListener { task ->
+                    // Hide loading
+                    hideLoading()
                     if (task.isSuccessful) {
                         // If the type has changed, update the balance accordingly
                         if (oldType != selectedType) {
@@ -176,5 +190,14 @@ class EditStatementActivity : AppCompatActivity() {
                 "remainingBalance" to remainingBalance
             ))
         }
+    }
+
+    private fun showLoading() {
+        loadingLayout.visibility = View.VISIBLE
+        animationView.playAnimation()  // Start Lottie animation
+    }
+    private fun hideLoading() {
+        loadingLayout.visibility = View.GONE
+        animationView.cancelAnimation()  // Stop Lottie animation
     }
 }

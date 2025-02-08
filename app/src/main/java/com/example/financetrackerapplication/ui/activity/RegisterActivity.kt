@@ -2,11 +2,14 @@ package com.example.financetrackerapplication.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.airbnb.lottie.LottieAnimationView
 import com.example.financetrackerapplication.R
 import com.example.financetrackerapplication.databinding.ActivityRegisterBinding
 import com.example.financetrackerapplication.model.UserModel
@@ -20,12 +23,20 @@ class RegisterActivity : AppCompatActivity() {
     private val userViewModel: UserViewModel by lazy {
         UserViewModel(UserRepositoryImpl())
     }
+
+    private lateinit var loadingLayout: LinearLayout
+    private lateinit var animationView: LottieAnimationView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Initialize Loading Layout and Animation View
+        loadingLayout = binding.loadingLayout
+        animationView = binding.animationView // Link LottieAnimationView
 
         // References to UI components
         val emailInput = binding.registerNewEmail
@@ -46,10 +57,14 @@ class RegisterActivity : AppCompatActivity() {
                 Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            // Show loading progress bar before registration
+            showLoading()
             // Extract the username from email
             val username = email.substringBefore("@")
             // Call ViewModel to handle registration logic
             userViewModel.signup(email, password) { isSuccess, message, userId ->
+                // Hide loading progress bar once response is received
+                hideLoading()
                 if (isSuccess) {
                     val userModel = UserModel(userId = userId, email = email, username = username) // Pass username
                     userViewModel.addUserToDatabase(userId, userModel) { dbSuccess, dbMessage ->
@@ -80,5 +95,15 @@ class RegisterActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
+
+    private fun showLoading() {
+        loadingLayout.visibility = View.VISIBLE
+        animationView.playAnimation()  // Start Lottie animation
+    }
+
+    private fun hideLoading() {
+        loadingLayout.visibility = View.GONE
+        animationView.cancelAnimation()  // Stop Lottie animation
     }
 }
