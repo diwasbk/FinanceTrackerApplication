@@ -50,7 +50,7 @@ class StatisticFragment : Fragment() {
                 binding.expenseBalance.text = "%.2f".format(totalExpense)
                 binding.remainingBalance.text = "%.2f".format(remainingBalance)
                 // Update the Pie Chart
-                updatePieChart(totalIncome, totalExpense, remainingBalance)
+                updatePieChart(totalIncome, totalExpense)
             }
             override fun onCancelled(error: DatabaseError) {
                 // Handle any database errors
@@ -58,12 +58,11 @@ class StatisticFragment : Fragment() {
         })
     }
 
-    private fun updatePieChart(income: Double, expense: Double, remainingBalance: Double) {
+    private fun updatePieChart(income: Double, expense: Double) {
         val entries = mutableListOf<PieEntry>()
         if (income > 0) entries.add(PieEntry(income.toFloat(), "Income"))
         if (expense > 0) entries.add(PieEntry(expense.toFloat(), "Expense"))
-        if (remainingBalance > 0) entries.add(PieEntry(remainingBalance.toFloat(), "Remaining"))
-        val colors = listOf(Color.parseColor("#4CAF50"), Color.RED, Color.parseColor("#2196F3"))
+        val colors = listOf(Color.parseColor("#4CAF50"), Color.RED)
 
         val dataSet = PieDataSet(entries, "").apply {
             setColors(colors)

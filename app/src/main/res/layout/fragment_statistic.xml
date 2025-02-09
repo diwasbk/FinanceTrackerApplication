@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="20dp"
+    android:padding="10dp"
     android:gravity="top"
     tools:context=".ui.fragment.StatisticFragment">
 
@@ -13,14 +13,15 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="5dp">
+        android:layout_margin="1dp"
+        app:cardCornerRadius="10dp">
 
         <LinearLayout
-            android:layout_width="341dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:background="@color/white"
-            android:padding="16dp">
+            android:padding="15dp">
 
             <!-- Total Income Row -->
             <LinearLayout

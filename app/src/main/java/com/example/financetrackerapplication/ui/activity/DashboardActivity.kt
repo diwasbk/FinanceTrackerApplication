@@ -3,6 +3,7 @@ package com.example.financetrackerapplication.ui.activity
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -21,14 +22,16 @@ class DashboardActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
+        // Set the background color of the edges (status bar and navigation bar) to green
+        setEdgeColor()
 
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // Ensure no background highlight
         binding.bottomNavigationView.itemActiveIndicatorColor = null
-        
+
         // To show Statement Fragment by default
         replaceFragment(AddFragment())
         binding.bottomNavigationView.setOnItemSelectedListener {menu->
@@ -53,5 +56,14 @@ class DashboardActivity : AppCompatActivity() {
         val fragmentTransaction : FragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.frameNavigation,fragment)
         fragmentTransaction.commit()
+    }
+
+    // Function to set the color of the edges (status and navigation bars)
+    private fun setEdgeColor() {
+        // Set the status bar color
+        window.statusBarColor = ContextCompat.getColor(this, R.color.green) // Use your custom green color
+
+        // Set the navigation bar color
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.green) // Use your custom green color
     }
 }

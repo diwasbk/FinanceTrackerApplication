@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:layout_marginBottom="84dp"
+        android:layout_marginBottom="150dp"
         android:orientation="vertical"
         android:padding="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -124,25 +124,26 @@
             android:fontFamily="@font/questrial"
             android:text="Already have and Account? Login!"
             android:textAlignment="center" />
+
+        <!-- Loading  -->
+        <LinearLayout
+            android:id="@+id/loadingLayout"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <!-- Lottie Animation -->
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animation_view"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                app:lottie_autoPlay="false"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/loading" />
+        </LinearLayout>
     </LinearLayout>
 
-    <!-- Loading  -->
-    <LinearLayout
-        android:id="@+id/loadingLayout"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
-
-        <!-- Lottie Animation -->
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/animation_view"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            app:lottie_autoPlay="false"
-            app:lottie_loop="true"
-            app:lottie_rawRes="@raw/loading" />
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

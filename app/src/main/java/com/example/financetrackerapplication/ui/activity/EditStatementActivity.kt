@@ -8,6 +8,7 @@ import android.widget.RadioButton
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.airbnb.lottie.LottieAnimationView
@@ -30,7 +31,9 @@ class EditStatementActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
+        // Set the background color of the edges (status bar and navigation bar) to green
+        setEdgeColor()
 
         binding = ActivityEditStatementBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -199,5 +202,14 @@ class EditStatementActivity : AppCompatActivity() {
     private fun hideLoading() {
         loadingLayout.visibility = View.GONE
         animationView.cancelAnimation()  // Stop Lottie animation
+    }
+
+    // Function to set the color of the edges (status and navigation bars)
+    private fun setEdgeColor() {
+        // Set the status bar color
+        window.statusBarColor = ContextCompat.getColor(this, R.color.green) // Use your custom green color
+
+        // Set the navigation bar color
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.green) // Use your custom green color
     }
 }
